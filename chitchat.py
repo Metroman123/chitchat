@@ -19,7 +19,7 @@ import json
 import time
 from vispy import app, gloo
 import numpy as np
-MODEL_PATH = r"C:\Bot\vosk-model-small-en-us-0.15"
+MODEL_PATH = "vosk-model-small-en-us-0.15"
 model = vosk.Model(MODEL_PATH)
 recognizer = vosk.KaldiRecognizer(model, 16000)
 speech = sr.Recognizer()
