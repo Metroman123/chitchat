@@ -1,0 +1,9 @@
+elevenlabs
+requests
+pyaudio
+speechrecognition
+vosk
+pillow
+vispy
+numpy
+torch
