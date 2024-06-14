@@ -7,3 +7,4 @@ pillow
 vispy
 numpy
 torch
+customtkinter
