@@ -8,3 +8,4 @@ voice can be created using the voice_id of your chosen elevenlabs voice.
 
 
 PYTHON VERSION: 3.9
+* You will need FFMPEG installed for Voices to work*
