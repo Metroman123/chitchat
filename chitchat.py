@@ -98,16 +98,6 @@ def release():
 
 
 
-
-
-
-
-
-
-
-
-
-
 talkButton = tk.Button(main, text="Press to talk", padx=20, pady=20,command=Hold, bg='red',anchor='s', fg='white',)
 talkButton.pack(side=tk.BOTTOM)
 
