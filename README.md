@@ -1,4 +1,4 @@
-# chitchat
+# ChitChat
 
 This is a simple Chatbot that contains a gui to initiate voice chat, via elevenlabs api
 Simply fill in the variables located in the ENV file
