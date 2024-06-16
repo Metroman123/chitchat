@@ -44,7 +44,7 @@ photo = ImageTk.PhotoImage(image)
 label = Label(main, image=photo)
 label.place(relx=0.5, rely=0.5, anchor="center")
 
-
+conversation_history = []
 
 def Hold():
     global pressed, held, text
@@ -78,6 +78,7 @@ def release():
         "messages": [
             {"role": "system",
              "content": f"{PERSONALITY}"},
+            *conversation_history,
             {"role": "user", "content": f""" {text}
 
                          """}
@@ -88,6 +89,9 @@ def release():
     extracted_response = response.text
     clean_response = extracted_response.replace(r"\n", "\n").replace("\"", "").replace("\\", "")
     print(clean_response)
+
+    conversation_history.append({"role": "user", "content": text})
+    conversation_history.append({"role": "assistant", "content": clean_response})
 
     client = ElevenLabs(
         api_key=ELEVEN_LABS_API_KEY,  # Defaults to ELEVEN_API_KEY
