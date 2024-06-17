@@ -1,3 +1,4 @@
+# NOT ALL LIBRARIES ARE BEING UTILIZED
 import tkinter as tk
 from tkinter import *
 import speech_recognition as sr
@@ -25,10 +26,10 @@ recognizer = vosk.KaldiRecognizer(model, 16000)
 speech = sr.Recognizer()
 text = None
 main = tk.Tk()
-main.geometry("200x300")
+main.geometry("400x400")
 main.resizable(False, False)
 main.title("ChitChat")
-main.configure(background= 'white')
+main.configure(background= 'lightblue')
 pressed = False
 held = False
 p = pyaudio.PyAudio()
@@ -37,14 +38,21 @@ print(devices)
 
 height = main.winfo_screenheight()
 width = main.winfo_screenwidth()
-image = Image.open("bot2.png")
-image = image.resize((100, 100), Image.Resampling.LANCZOS)
-photo = ImageTk.PhotoImage(image)
+image = Image.open("chitchat.png")
+image = image.resize((200, 200), Image.Resampling.LANCZOS)
+photo = ImageTk.PhotoImage(image, tk.TOP)
 
-label = Label(main, image=photo)
+label = Label(main)
 label.place(relx=0.5, rely=0.5, anchor="center")
 
 conversation_history = []
+
+def toggle_fullscreen(event=None):
+    main.state = not main.state  # Toggle the state
+    main.attributes('-fullscreen', main.state)
+main.bind("<F11>", toggle_fullscreen)
+
+
 
 def Hold():
     global pressed, held, text
@@ -66,7 +74,7 @@ def Hold():
                 release()
 
 def release():
-    global pressed, held,text
+    global pressed, held,text, conversation_history
     pressed = False
     held = False
     url = "http://192.168.50.22:8000/generate/"
@@ -100,10 +108,61 @@ def release():
     hearing = client.generate(text = clean_response, voice = f"{VOICE}", model="eleven_multilingual_v2")
     audio = play(hearing)
 
+def Chat():
+    global text, conversation_history
+    user_input = entry.get()
+    if user_input:
+        entry.delete(0, tk.END)  # Clear the entry box
+
+        url = "http://192.168.50.22:8000/generate/"
+        headers = {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+        }
+        payload = {
+            "messages": [
+                {"role": "system",
+                 "content": f"{PERSONALITY}"},
+                *conversation_history,
+                {"role": "user", "content": f""" {user_input}
+    
+                                 """}
+            ]
+        }
+
+        response = requests.post(url, json=payload, headers=headers)
+        extracted_response = response.text
+        clean_response = extracted_response.replace(r"\n", "\n").replace("\"", "").replace("\\", "")
+        print(clean_response)
+
+        conversation_history.append({"role": "user", "content": user_input})
+        conversation_history.append({"role": "assistant", "content": clean_response})
+
+        reply_text.config(state='normal')  # Enable the text widget temporarily
+        reply_text.delete('1.0', tk.END)  # Clear the text widget
+        reply_text.insert(tk.END, clean_response)
+        reply_text.config(state='disabled')  # Disable the text widget again
+        return clean_response
+        print(conversation_history)
+def on_enter(event):
+    user_input = entry.get()
+    if user_input:
+        Chat()
+
+entry = tk.Entry(main, width=30,relief="solid")
+entry_label = tk.Label(main, text="Type here: ")
+entry_label.pack(side=tk.LEFT, anchor=tk.SW)
+entry.pack(side=tk.BOTTOM, anchor=tk.SW)
 
 
-talkButton = tk.Button(main, text="Press to talk", padx=20, pady=20,command=Hold, bg='red',anchor='s', fg='white',)
-talkButton.pack(side=tk.BOTTOM)
+reply_text = tk.Text(main, height=15,width=35, state="disabled", relief="solid", font=("Arial", 10))
+reply_text.place(relx=0, rely=0.6, anchor="w")
+
+send_button = tk.Button(main, text="Send", command=Chat)
+send_button.config(height=1)
+send_button.place(relx=0.72, rely=1, anchor="se")
+talkButton = tk.Button(main, text="Voice Chat", padx=10, pady=30,command=Hold, bg='red',anchor="e", fg='white',)
+talkButton.pack(side=tk.BOTTOM, anchor=tk.SE, pady=(0,0))
 
 label.pack()
 main.mainloop()
