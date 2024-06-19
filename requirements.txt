@@ -8,3 +8,4 @@ vispy
 numpy
 torch
 customtkinter
+librosa

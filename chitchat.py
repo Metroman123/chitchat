@@ -3,6 +3,7 @@ import tkinter as tk
 from tkinter import *
 import speech_recognition as sr
 import pyaudio
+import librosa as lb
 import requests
 import os
 import tkinter
@@ -21,7 +22,8 @@ import json
 import time
 from vispy import app, gloo
 import numpy as np
-# Initiation
+
+# Speech Recognition Initiation
 MODEL_PATH = "vosk-model-small-en-us-0.15"
 model = vosk.Model(MODEL_PATH)
 recognizer = vosk.KaldiRecognizer(model, 16000)
@@ -59,12 +61,19 @@ canvas.place(x=80, y=10)
 label = Label(main)
 label.place(relx=0.5, rely=0.5, anchor="center")
 
+#Context Variable
 conversation_history = []
 
-def toggle_fullscreen(event=None):
-    main.state = not main.state  # Toggle the state
-    main.attributes('-fullscreen', main.state)
-main.bind("<F11>", toggle_fullscreen)
+# Software TopBar System
+menu = tk.Menu(main)
+file_menu = tk.Menu(menu, tearoff=0)
+menu.add_cascade(label="File", menu=file_menu)
+file_menu.add_command(label="Export")
+file_menu.add_command(label="Settings")
+file_menu.add_command(label="Exit", command=quit)
+main.config(menu=menu)
+
+
 
 
 # Function for when voice chat button is pressed
@@ -87,7 +96,8 @@ def Hold():
                 time.sleep(1)
                 release()
 
-# Function for when voice chat button is released
+
+# Function for when user speech to text is collected.
 def release():
     global pressed, held,text, conversation_history
     pressed = False
@@ -165,6 +175,9 @@ def on_enter(event):
     if user_input:
         Chat()
 
+def exit():
+    quit()
+
 
 # Text Windows and Buttons
 entry = tk.Entry(main, width=30,relief="solid")
@@ -173,7 +186,7 @@ entry_label.pack(side=tk.LEFT, anchor=tk.SW)
 entry.pack(side=tk.BOTTOM, anchor=tk.SW)
 
 
-reply_text = tk.Text(main, height=15,width=35, state="disabled", relief="solid", font=("Arial", 10))
+reply_text = tk.Text(main, height=15,width=35, state="disabled", relief="solid", font=("Arial", 10), wrap="word")
 reply_text.place(relx=0, rely=0.65, anchor="w")
 
 send_button = tk.Button(main, text="Send", command=Chat)
