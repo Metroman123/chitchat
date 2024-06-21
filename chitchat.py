@@ -77,8 +77,9 @@ file_menu.add_command(label="Exit", command=quit)
 main.config(menu=menu)
 
 
-# Function so the send button can be used just by pressing enter.
-
+# Function to play key Noise
+def isTyping():
+    winsound.PlaySound("Audio/Typing.wav", winsound.SND_FILENAME | winsound.SND_ASYNC)
 
 
 # Function for when voice chat button is pressed
@@ -197,6 +198,7 @@ def exit():
 entry = tk.Entry(main, width=30,relief="solid")
 entry.bind('<Return>', lambda event: Chat())
 entry.bind('<KP_Enter>', lambda event: Chat())
+entry.bind('<KEY>', lambda event: isTyping())
 entry_label = tk.Label(main, text="Type here: ", bg="lightblue")
 entry_label.pack(side=tk.LEFT, anchor=tk.SW)
 entry.pack(side=tk.BOTTOM, anchor=tk.SW)
