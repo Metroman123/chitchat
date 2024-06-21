@@ -3,11 +3,13 @@ import tkinter as tk
 from tkinter import *
 import speech_recognition as sr
 import pyaudio
+import tiktoken
 import librosa as lb
 import requests
 import os
 import tkinter
-from elevenlabs import Voice, VoiceSettings, voice_generation, play, voices
+from pydub import AudioSegment
+import winsound
 import customtkinter
 from tkinter import ttk
 from pyaudio import *
@@ -40,6 +42,7 @@ main.configure(background='lightblue')
 # Global Variables
 pressed = False
 held = False
+MAX_LENGTH = 3000
 p = pyaudio.PyAudio()
 devices = p.get_device_count()
 print(devices)
@@ -74,6 +77,8 @@ file_menu.add_command(label="Exit", command=quit)
 main.config(menu=menu)
 
 
+# Function so the send button can be used just by pressing enter.
+
 
 
 # Function for when voice chat button is pressed
@@ -99,7 +104,7 @@ def Hold():
 
 # Function for when user speech to text is collected.
 def release():
-    global pressed, held,text, conversation_history
+    global pressed, held,text, conversation_history, MAX_LENGTH
     pressed = False
     held = False
     url = "http://192.168.50.22:8000/generate/"
@@ -132,10 +137,14 @@ def release():
 
     hearing = client.generate(text = clean_response, voice = f"{VOICE}", model="eleven_multilingual_v2")
     audio = play(hearing)
+    if len(conversation_history) > MAX_LENGTH:
+        middle_index = len(conversation_history) // 2
+        conversation_history = conversation_history[:middle_index] + conversation_history[-middle_index:]
 
 # Function for Text Chat
 def Chat():
-    global text, conversation_history
+    global text, conversation_history, MAX_LENGTH
+    winsound.PlaySound("Audio/Mouse_click_noise.wav", winsound.SND_FILENAME | winsound.SND_ASYNC)
     user_input = entry.get()
     if user_input:
         entry.delete(0, tk.END)  # Clear the entry box
@@ -163,13 +172,16 @@ def Chat():
 
         conversation_history.append({"role": "user", "content": user_input})
         conversation_history.append({"role": "assistant", "content": clean_response})
-
         reply_text.config(state='normal')  # Enable the text widget temporarily
         reply_text.delete('1.0', tk.END)  # Clear the text widget
         reply_text.insert(tk.END, clean_response)
         reply_text.config(state='disabled')  # Disable the text widget again
+        winsound.PlaySound("Audio/Chatroom_Received2.wav", winsound.SND_FILENAME | winsound.SND_ASYNC)
         return clean_response
         print(conversation_history)
+        if len(conversation_history) > MAX_LENGTH:
+            middle_index = len(conversation_history) // 2
+            conversation_history = conversation_history[:middle_index] + conversation_history[-middle_index:]
 def on_enter(event):
     user_input = entry.get()
     if user_input:
@@ -179,8 +191,12 @@ def exit():
     quit()
 
 
+
+
 # Text Windows and Buttons
 entry = tk.Entry(main, width=30,relief="solid")
+entry.bind('<Return>', lambda event: Chat())
+entry.bind('<KP_Enter>', lambda event: Chat())
 entry_label = tk.Label(main, text="Type here: ", bg="lightblue")
 entry_label.pack(side=tk.LEFT, anchor=tk.SW)
 entry.pack(side=tk.BOTTOM, anchor=tk.SW)
