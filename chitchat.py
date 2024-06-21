@@ -3,7 +3,6 @@ import tkinter as tk
 from tkinter import *
 import speech_recognition as sr
 import pyaudio
-import tiktoken
 import librosa as lb
 import requests
 import os
