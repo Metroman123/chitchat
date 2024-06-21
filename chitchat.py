@@ -198,7 +198,7 @@ def exit():
 entry = tk.Entry(main, width=30,relief="solid")
 entry.bind('<Return>', lambda event: Chat())
 entry.bind('<KP_Enter>', lambda event: Chat())
-entry.bind('<KEY>', lambda event: isTyping())
+entry.bind('<Key>', lambda event: isTyping())
 entry_label = tk.Label(main, text="Type here: ", bg="lightblue")
 entry_label.pack(side=tk.LEFT, anchor=tk.SW)
 entry.pack(side=tk.BOTTOM, anchor=tk.SW)
