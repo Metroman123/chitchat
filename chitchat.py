@@ -7,7 +7,6 @@ import librosa as lb
 import requests
 import os
 import tkinter
-from pydub import AudioSegment
 import winsound
 import customtkinter
 from tkinter import ttk
