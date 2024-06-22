@@ -6,6 +6,7 @@ import pyaudio
 import librosa as lb
 import requests
 import os
+
 import tkinter
 import winsound
 import customtkinter
@@ -13,6 +14,7 @@ from tkinter import ttk
 from pyaudio import *
 import io
 from elevenlabs.client import ElevenLabs
+from elevenlabs import play, stream, save
 import torch
 from env import ELEVEN_LABS_API_KEY, PERSONALITY, VOICE
 import vosk
@@ -135,7 +137,7 @@ def release():
     )
 
     hearing = client.generate(text = clean_response, voice = f"{VOICE}", model="eleven_multilingual_v2")
-    audio = play(hearing)
+    play(hearing)
     if len(conversation_history) > MAX_LENGTH:
         middle_index = len(conversation_history) // 2
         conversation_history = conversation_history[:middle_index] + conversation_history[-middle_index:]
