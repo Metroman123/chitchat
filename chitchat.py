@@ -26,7 +26,7 @@ from vispy import app, gloo
 import numpy as np
 
 # Speech Recognition Initiation
-MODEL_PATH = "vosk-model-en-us-0.22"
+MODEL_PATH = "vosk-model-small-en-us-0.15"
 model = vosk.Model(MODEL_PATH)
 recognizer = vosk.KaldiRecognizer(model, 16000)
 speech = sr.Recognizer()
