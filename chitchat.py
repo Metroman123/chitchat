@@ -150,7 +150,7 @@ def Chat():
     if user_input:
         entry.delete(0, tk.END)  # Clear the entry box
 
-        url = "http://192.168.50.22:8000/generate/"
+        url = ""
         headers = {
             "Accept": "application/json",
             "Content-Type": "application/json",
